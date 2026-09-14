@@ -73,4 +73,21 @@ public class EmployeeDAO {
         }
     }
 
+    // ---------- UPDATE (TODO 0.6) ----------
+    public Employee update(Employee e) {
+        // e truyen vao co the dang DETACHED (lay tu findById() o mot EntityManager khac)
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Employee merged = em.merge(e); // merge() TRA VE mot entity MANAGED khac
+            em.getTransaction().commit();
+            return merged; // PHAI dung object nay tiep, khong dung "e" cu
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
 }
