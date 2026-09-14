@@ -90,4 +90,22 @@ public class EmployeeDAO {
         }
     }
 
+    // ---------- DELETE (TODO 0.7) ----------
+    public void delete(Long id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Employee e = em.find(Employee.class, id); // e dang MANAGED
+            if (e != null) {
+                em.remove(e); // -> e chuyen sang REMOVED, se bi DELETE khi commit
+            }
+            em.getTransaction().commit();
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
 }
