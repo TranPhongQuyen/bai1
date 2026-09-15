@@ -29,6 +29,17 @@ public class Department {
         this.location = location;
     }
 
+    // TODO 2.4 - Helper method dong bo 2 chieu
+    public void addEmployee(Employee e) {
+        this.employees.add(e);
+        e.setDepartment(this);
+    }
+
+    public void removeEmployee(Employee e) {
+        this.employees.remove(e);
+        e.setDepartment(null);
+    }
+
     public Long getId() {
         return id;
     }
