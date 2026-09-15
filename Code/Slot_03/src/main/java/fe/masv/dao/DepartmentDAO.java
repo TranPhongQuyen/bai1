@@ -71,4 +71,18 @@ public class DepartmentDAO {
             em.close();
         }
     }
+
+    // TODO 2.6 - JPQL JOIN FETCH theo ID
+    public Department findByIdWithEmployees(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT d FROM Department d JOIN FETCH d.employees WHERE d.id = :id",
+                            Department.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
 }
