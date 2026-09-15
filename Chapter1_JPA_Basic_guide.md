@@ -1,6 +1,6 @@
-# Hướng dẫn chi tiết — Bài 0: JPA cơ bản với 1 Entity (chưa Mapping)
+# Hướng dẫn chi tiết — Slot 2: JPA cơ bản với 1 Entity (chưa Mapping)
 
-> Tài liệu đi kèm `Chapter1_JPA_Basic.md`. Mục tiêu: nắm chắc annotation cơ bản + CRUD + entity lifecycle **trước khi** học sang quan hệ (OneToOne/OneToMany/ManyToMany).
+> Tài liệu hướng dẫn Slot 2 trong lộ trình 20 Slots. Mục tiêu: nắm chắc annotation cơ bản + CRUD + entity lifecycle **trước khi** học sang các bài mapping quan hệ (Slot 3 - Slot 5).
 
 ---
 
