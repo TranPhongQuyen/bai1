@@ -24,6 +24,11 @@ public class Employee {
     private LocalDate hireDate;
     private boolean active;
 
+    // TODO 2.2 - Owning side trong Employee
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
+
     public Employee() {
     }
 
@@ -94,6 +99,14 @@ public class Employee {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override
