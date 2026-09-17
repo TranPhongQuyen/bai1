@@ -12,7 +12,20 @@ import java.time.LocalDate;
 public class Main {
 
     public static void main(String[] args) {
-        DepartmentDAO departmentDAO = new DepartmentDAO();
+        // ==========================================
+        // TODO 2.4: HELPER METHOD DONG BO 2 CHIEU
+        // ==========================================
+        System.out.println("\n=== TODO 2.4: KIEM TRA HELPER METHOD DONG BO 2 CHIEU ===");
+        Department testDept = new Department("IT_Test", "Da Nang");
+        Employee testEmp = new Employee("test_sync@company.com", "Test Sync", Gender.MALE,
+                new BigDecimal("10000000"), LocalDate.now());
+        testDept.addEmployee(testEmp);
+        boolean inList = testDept.getEmployees().contains(testEmp);
+        boolean deptSet = testEmp.getDepartment() == testDept;
+        System.out.println("Contains in list: " + inList + " | Department reference set: " + deptSet);
+        if (inList && deptSet) {
+            System.out.println("-> TODO 2.4 PASSED: Helper method addEmployee hoat dong chinh xac!");
+        }
 
         System.out.println("=== TODO 2.7: DEMO LUU CASCADE DEPARTMENT + 3 EMPLOYEES ===");
         String deptName = "Marketing_" + System.currentTimeMillis();
