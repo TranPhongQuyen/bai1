@@ -105,4 +105,17 @@ public class DepartmentDAO {
             em.close();
         }
     }
+
+    // TODO 2.9 - Fix N+1 bang JOIN FETCH (Lay tat ca Department va Employees trong 1 query duy nhat)
+    public List<Department> findAllWithEmployees() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT DISTINCT d FROM Department d JOIN FETCH d.employees",
+                            Department.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

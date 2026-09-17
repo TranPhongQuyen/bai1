@@ -68,6 +68,17 @@ public class Main {
         System.out.println("Dang chay findAllWithEmployeesNPlusOne() (1 query SELECT Department + N queries SELECT Employee)...");
         departmentDAO.findAllWithEmployeesNPlusOne();
 
+        // ==========================================
+        // TODO 2.9: FIX N+1 BANG JOIN FETCH
+        // ==========================================
+        System.out.println("\n=== TODO 2.9: FIX N+1 BANG JOIN FETCH ALL ===");
+        System.out.println("Dang chay findAllWithEmployees() (Chi 1 query SELECT JOIN FETCH cho tat ca Department + Employees)...");
+        java.util.List<Department> allDeptsWithEmps = departmentDAO.findAllWithEmployees();
+        for (Department d : allDeptsWithEmps) {
+            System.out.println("Dept: " + d.getName() + " | Employees count: " + d.getEmployees().size());
+        }
+
         JPAUtil.close();
+        System.out.println("\n=== HOAN THANH TAT CA TODO CHAPTER 2 (SLOT 03) ===");
     }
 }
