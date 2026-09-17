@@ -81,6 +81,8 @@ public class DepartmentDAO {
                             Department.class)
                     .setParameter("id", id)
                     .getSingleResult();
+        } catch (jakarta.persistence.NoResultException ex) {
+            return null;
         } finally {
             em.close();
         }
