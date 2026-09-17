@@ -27,11 +27,16 @@ public class Main {
             System.out.println("-> TODO 2.4 PASSED: Helper method addEmployee hoat dong chinh xac!");
         }
 
-        System.out.println("=== TODO 2.7: DEMO LUU CASCADE DEPARTMENT + 3 EMPLOYEES ===");
-        String deptName = "Marketing_" + System.currentTimeMillis();
+        DepartmentDAO departmentDAO = new DepartmentDAO();
+
+        // ==========================================
+        // TODO 2.7: DEMO LUU CASCADE DEPARTMENT + 3 EMPLOYEES
+        // ==========================================
+        System.out.println("\n=== TODO 2.7: DEMO LUU CASCADE DEPARTMENT + 3 EMPLOYEES ===");
+        long timestamp = System.currentTimeMillis();
+        String deptName = "Marketing_" + timestamp;
         Department dept = new Department(deptName, "Ha Noi");
 
-        long timestamp = System.currentTimeMillis();
         Employee e1 = new Employee("a_" + timestamp + "@company.com", "Nguyen Van A", Gender.MALE,
                 new BigDecimal("15000000"), LocalDate.of(2022, 1, 10));
         Employee e2 = new Employee("b_" + timestamp + "@company.com", "Tran Thi B", Gender.FEMALE,
