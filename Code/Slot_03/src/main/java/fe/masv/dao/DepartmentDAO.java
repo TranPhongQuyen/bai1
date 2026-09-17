@@ -87,4 +87,22 @@ public class DepartmentDAO {
             em.close();
         }
     }
+
+    // TODO 2.8 - Tai hien N+1 Query Problem (1 query cho Department + N queries truy cap employees)
+    public List<Department> findAllWithEmployeesNPlusOne() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            List<Department> list = em.createQuery("SELECT d FROM Department d", Department.class)
+                    .getResultList();
+            for (Department d : list) {
+                // Truy cap vao d.getEmployees() khi EntityManager dang mo
+                // Do lazy loading, Hibernate se thuc thi 1 cau SQL SELECT N+1 cho moi phong ban
+                int count = d.getEmployees().size();
+                System.out.println("  [N+1 Query] Dept ID: " + d.getId() + " (" + d.getName() + ") -> Employee count: " + count);
+            }
+            return list;
+        } finally {
+            em.close();
+        }
+    }
 }

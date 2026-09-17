@@ -54,10 +54,19 @@ public class Main {
 
         // Tim lai kem employees bang JOIN FETCH (TODO 2.6)
         Department found = departmentDAO.findByIdWithEmployees(dept.getId());
-        System.out.println("Phong ban: " + found.getName());
-        for (Employee e : found.getEmployees()) {
-            System.out.println("  - " + e);
+        if (found != null) {
+            System.out.println("Phong ban: " + found.getName());
+            for (Employee e : found.getEmployees()) {
+                System.out.println("  - " + e);
+            }
         }
+
+        // ==========================================
+        // TODO 2.8: TAI HIEN N+1 QUERY PROBLEM
+        // ==========================================
+        System.out.println("\n=== TODO 2.8: TAI HIEN N+1 QUERY PROBLEM ===");
+        System.out.println("Dang chay findAllWithEmployeesNPlusOne() (1 query SELECT Department + N queries SELECT Employee)...");
+        departmentDAO.findAllWithEmployeesNPlusOne();
 
         JPAUtil.close();
     }
