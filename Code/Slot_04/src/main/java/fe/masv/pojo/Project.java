@@ -30,7 +30,7 @@ public class Project {
     private LocalDate endDate;
 
     // TODO 5.3 - Trong Project (inverse side): Mapping ManyToMany
-    @Transient // Tạm thời dùng @Transient trước khi cấu hình ở TODO 5.3
+    @ManyToMany(mappedBy = "projects")
     private Set<Employee> employees = new HashSet<>();
 
     public Project() {
