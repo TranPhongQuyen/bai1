@@ -1,5 +1,7 @@
 package fe.masv;
 
+import fe.masv.dao.EmployeeDAO;
+import fe.masv.dao.ProjectDAO;
 import fe.masv.pojo.Employee;
 import fe.masv.pojo.Gender;
 import fe.masv.pojo.Project;
@@ -60,6 +62,10 @@ public class Main {
             System.out.println(emp3.getFullName() + " tham gia: ");
             emp3.getProjects().forEach(p -> System.out.println("- " + p.getProjectName()));
 
+            // TODO 5.8: Demo thống kê
+            ProjectDAO projectDAO = new ProjectDAO();
+            projectDAO.printProjectStatistics();
+            
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
