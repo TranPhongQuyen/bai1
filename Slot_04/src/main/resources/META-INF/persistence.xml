@@ -19,7 +19,7 @@
             <property name="jakarta.persistence.jdbc.password" value="123456"/>
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
             <!-- Bat hien thi cau SQL de kiem tra bai toan N+1 -->
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>

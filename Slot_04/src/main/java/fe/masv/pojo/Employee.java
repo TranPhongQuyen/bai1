@@ -78,6 +78,12 @@ public class Employee {
         p.getEmployees().add(this);
     }
 
+    // TODO 5.9 - Helper method gỡ phân công
+    public void unassignFromProject(Project p) {
+        this.projects.remove(p);
+        p.getEmployees().remove(this);
+    }
+
     // Getters and Setters
 
     public Long getId() {

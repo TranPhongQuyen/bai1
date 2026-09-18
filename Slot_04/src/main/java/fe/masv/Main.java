@@ -66,6 +66,14 @@ public class Main {
             ProjectDAO projectDAO = new ProjectDAO();
             projectDAO.printProjectStatistics();
             
+            // Khởi tạo EmployeeDAO
+            EmployeeDAO employeeDAO = new EmployeeDAO();
+
+            // TODO 5.9: Demo gỡ phân công
+            System.out.println("\n=== TODO 5.9: GỠ PHÂN CÔNG NV1 KHỎI PROJECT A ===");
+            employeeDAO.unassignEmployeeFromProject(emp1.getId(), projectA.getId());
+            System.out.println("Đã gỡ Nguyen Van A khỏi Project A. (Bạn có thể kiểm tra database bảng employee_project)");
+
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();

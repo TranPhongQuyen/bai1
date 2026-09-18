@@ -5,6 +5,9 @@ import fe.masv.pojo.Project;
 import fe.masv.util.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
+
+import java.util.List;
 
 public class EmployeeDAO {
 
@@ -28,6 +31,28 @@ public class EmployeeDAO {
             if (tx.isActive()) {
                 tx.rollback();
             }
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
+    // TODO 5.9 - Gỡ 1 nhân viên khỏi 1 project
+    public void unassignEmployeeFromProject(Long employeeId, Long projectId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Employee employee = em.find(Employee.class, employeeId);
+            Project project = em.find(Project.class, projectId);
+
+            if (employee != null && project != null) {
+                // Gọi helper method gỡ phân công
+                employee.unassignFromProject(project);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
             e.printStackTrace();
         } finally {
             em.close();
