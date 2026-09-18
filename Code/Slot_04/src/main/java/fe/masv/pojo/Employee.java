@@ -34,7 +34,12 @@ public class Employee {
     private boolean active = true;
 
     // TODO 5.2 - Trong Employee (owning side): Mapping ManyToMany
-    @Transient // Tạm thời dùng @Transient trước khi cấu hình ở TODO 5.2
+    @ManyToMany
+    @JoinTable(
+            name = "employee_project",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
     private Set<Project> projects = new HashSet<>();
 
     public Employee() {
