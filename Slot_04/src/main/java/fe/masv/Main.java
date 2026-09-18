@@ -74,6 +74,13 @@ public class Main {
             employeeDAO.unassignEmployeeFromProject(emp1.getId(), projectA.getId());
             System.out.println("Đã gỡ Nguyen Van A khỏi Project A. (Bạn có thể kiểm tra database bảng employee_project)");
 
+            // TODO 5.10: Tìm các Employee tham gia nhiều hơn 1 project cùng lúc
+            System.out.println("\n=== TODO 5.10: TÌM NHÂN VIÊN THAM GIA > 1 PROJECT ===");
+            java.util.List<Employee> busyEmployees = employeeDAO.findEmployeesInMultipleProjects();
+            for (Employee e : busyEmployees) {
+                System.out.println("- " + e.getFullName() + " (Đang tham gia " + e.getProjects().size() + " projects)");
+            }
+
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
