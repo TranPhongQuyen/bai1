@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -52,6 +53,23 @@ public class Employee {
         this.email = email;
         this.gender = gender;
         this.active = active;
+    }
+
+    // TODO 5.4 - Override equals()/hashCode() dựa trên email (business key)
+    // Lý do không dùng ID: ID chỉ được cấp sau khi persist vào DB.
+    // Nếu dùng ID, khi đưa đối tượng mới (chưa có ID) vào Set, hashCode sẽ thay đổi sau khi lưu,
+    // dẫn đến việc Set không thể tìm thấy đối tượng đó nữa. Dùng business key đảm bảo tính nhất quán.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(email, employee.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 
     // Getters and Setters

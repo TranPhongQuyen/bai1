@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -42,6 +43,22 @@ public class Project {
         this.budget = budget;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    // TODO 5.4 - Override equals()/hashCode() dựa trên projectCode (business key)
+    // Lý do không dùng ID: Giống với Employee, để đảm bảo tính nhất quán của Set<Project> 
+    // trước và sau khi lưu vào database.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Project project = (Project) o;
+        return Objects.equals(projectCode, project.projectCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectCode);
     }
 
     // Getters and Setters
