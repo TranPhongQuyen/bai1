@@ -72,6 +72,12 @@ public class Employee {
         return Objects.hash(email);
     }
 
+    // TODO 5.5 - Helper method đồng bộ 2 chiều
+    public void assignToProject(Project p) {
+        this.projects.add(p);
+        p.getEmployees().add(this);
+    }
+
     // Getters and Setters
 
     public Long getId() {
