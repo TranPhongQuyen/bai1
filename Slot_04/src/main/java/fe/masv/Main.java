@@ -81,6 +81,11 @@ public class Main {
                 System.out.println("- " + e.getFullName() + " (Đang tham gia " + e.getProjects().size() + " projects)");
             }
 
+            // TODO 5.11: Demo deactivate employee
+            System.out.println("\n=== TODO 5.11: HỦY KÍCH HOẠT NHÂN VIÊN ===");
+            employeeDAO.deactivateEmployee(emp2.getId());
+            System.out.println("Đã set active = false cho " + emp2.getFullName() + ". Quan hệ với project không bị xóa!");
+
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();

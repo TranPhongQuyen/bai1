@@ -70,4 +70,27 @@ public class EmployeeDAO {
             em.close();
         }
     }
+
+    // TODO 5.11 - Hủy kích hoạt Employee
+    // Giải thích: Nhân viên nghỉ việc (active = false) không nên bị tự động gỡ khỏi tất cả các project
+    // (tức là không cascade REMOVE). Lý do là vì dữ liệu lịch sử tham gia dự án (đóng góp) của họ 
+    // cần được giữ lại trong hệ thống (bảng employee_project) để tra cứu, tính lương cũ hoặc làm báo cáo.
+    public void deactivateEmployee(Long employeeId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Employee employee = em.find(Employee.class, employeeId);
+            if (employee != null) {
+                employee.setActive(false);
+                // Cố tình KHÔNG xóa quan hệ N-N (không clear projects)
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
 }
