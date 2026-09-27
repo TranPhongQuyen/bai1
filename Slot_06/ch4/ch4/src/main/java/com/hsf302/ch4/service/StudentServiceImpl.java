@@ -128,4 +128,15 @@ public class StudentServiceImpl implements StudentService {
         }
         return studentRepository.findTopNByDepartmentNative(deptCode, n);
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.dto.StudentSummary> getActiveSummaries() {
+        return studentRepository.findActiveSummaries();
+    }
+
+    @Override
+    public org.springframework.data.domain.Page<com.hsf302.ch4.pojo.Student> findActiveByDepartment(String deptCode, int pageIndex, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageIndex, size, org.springframework.data.domain.Sort.by("gpa").descending());
+        return studentRepository.findActiveByDepartment(deptCode, pageable);
+    }
 }

@@ -21,4 +21,6 @@ public interface StudentService {
     java.util.List<com.hsf302.ch4.pojo.Student> searchByKeyword(String keyword);   // TODO 13
     java.util.List<com.hsf302.ch4.pojo.Student> findAboveAverageGpa();   // TODO 15
     java.util.List<com.hsf302.ch4.pojo.Student> findTopNInDepartment(String deptCode, int n);   // TODO 17
+    java.util.List<com.hsf302.ch4.dto.StudentSummary> getActiveSummaries();   // TODO 18
+    org.springframework.data.domain.Page<com.hsf302.ch4.pojo.Student> findActiveByDepartment(String deptCode, int pageIndex, int size);   // TODO 19
 }

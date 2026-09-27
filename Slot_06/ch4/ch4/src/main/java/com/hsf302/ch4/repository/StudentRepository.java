@@ -42,4 +42,14 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
                    "ORDER BY s.gpa DESC",
            nativeQuery = true)
     java.util.List<Student> findTopNByDepartmentNative(@org.springframework.data.repository.query.Param("code") String code, @org.springframework.data.repository.query.Param("n") int n);
+
+    @org.springframework.data.jpa.repository.Query("SELECT s.studentCode AS studentCode, s.fullName AS fullName, " +
+           "       s.gpa AS gpa, d.name AS departmentName " +
+           "FROM Student s JOIN s.department d " +
+           "WHERE s.active = true " +
+           "ORDER BY s.fullName")
+    java.util.List<com.hsf302.ch4.dto.StudentSummary> findActiveSummaries();
+
+    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s WHERE s.department.code = :code AND s.active = true")
+    org.springframework.data.domain.Page<Student> findActiveByDepartment(@org.springframework.data.repository.query.Param("code") String code, org.springframework.data.domain.Pageable pageable);
 }
