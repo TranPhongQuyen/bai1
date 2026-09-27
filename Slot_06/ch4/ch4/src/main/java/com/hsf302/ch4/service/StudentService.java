@@ -5,4 +5,7 @@ public interface StudentService {
     java.util.Optional<com.hsf302.ch4.pojo.Student> findById(Long id);            // TODO 6
     java.util.List<com.hsf302.ch4.pojo.Student> findAllOrderByGpaDesc();                              // TODO 7a
     org.springframework.data.domain.Page<com.hsf302.ch4.pojo.Student> findPage(int pageIndex, int size, String sortField);  // TODO 7b
+    java.util.Optional<com.hsf302.ch4.pojo.Student> findByStudentCode(String studentCode);   // TODO 8a
+    boolean isEmailExisted(String email);                      // TODO 8b
+    long countActive();                                        // TODO 8c
 }

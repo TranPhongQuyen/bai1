@@ -35,4 +35,19 @@ public class StudentServiceImpl implements StudentService {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageIndex, size, org.springframework.data.domain.Sort.by(sortField).ascending());
         return studentRepository.findAll(pageable);
     }
+
+    @Override
+    public java.util.Optional<com.hsf302.ch4.pojo.Student> findByStudentCode(String studentCode) {
+        return studentRepository.findByStudentCode(studentCode);
+    }
+
+    @Override
+    public boolean isEmailExisted(String email) {
+        return studentRepository.existsByEmail(email);
+    }
+
+    @Override
+    public long countActive() {
+        return studentRepository.countByActiveTrue();
+    }
 }

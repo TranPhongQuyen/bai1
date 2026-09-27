@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface StudentRepository extends JpaRepository<Student, Long>,
                                            JpaSpecificationExecutor<Student> {
+    java.util.Optional<Student> findByStudentCode(String studentCode);   // WHERE student_code = ?
+    boolean existsByEmail(String email);                        // kiểm tra tồn tại
+    long countByActiveTrue();                                   // WHERE active = 1 (không cần tham số)
 }
