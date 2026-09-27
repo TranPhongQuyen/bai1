@@ -139,4 +139,13 @@ public class StudentServiceImpl implements StudentService {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageIndex, size, org.springframework.data.domain.Sort.by("gpa").descending());
         return studentRepository.findActiveByDepartment(deptCode, pageable);
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> search(String kw, String deptCode, Double minGpa, Boolean active) {
+        org.springframework.data.jpa.domain.Specification<com.hsf302.ch4.pojo.Student> spec = org.springframework.data.jpa.domain.Specification.where(com.hsf302.ch4.specification.StudentSpecs.nameContains(kw))
+                .and(com.hsf302.ch4.specification.StudentSpecs.inDepartment(deptCode))
+                .and(com.hsf302.ch4.specification.StudentSpecs.gpaAtLeast(minGpa))
+                .and(com.hsf302.ch4.specification.StudentSpecs.isActive(active));
+        return studentRepository.findAll(spec, org.springframework.data.domain.Sort.by("fullName"));
+    }
 }
