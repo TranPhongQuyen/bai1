@@ -12,4 +12,7 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
            "GROUP BY d.code, d.name " +
            "ORDER BY d.code")
     java.util.List<com.hsf302.ch4.dto.DepartmentStatDTO> getDepartmentStats();
+
+    @org.springframework.data.jpa.repository.Query("SELECT d FROM Department d LEFT JOIN FETCH d.students WHERE d.code = :code")
+    java.util.Optional<Department> findByCodeWithStudents(@org.springframework.data.repository.query.Param("code") String code);
 }

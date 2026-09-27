@@ -5,4 +5,6 @@ public interface DepartmentService {
     boolean existsById(Long id);                    // TODO 6
     java.util.List<com.hsf302.ch4.pojo.Department> findDepartmentsWithoutStudents();  // TODO 11d
     java.util.List<com.hsf302.ch4.dto.DepartmentStatDTO> getStatistics();   // TODO 14 (dùng lại ở TODO 23)
+    java.util.Optional<com.hsf302.ch4.pojo.Department> findByCode(String code);   // TODO 16a
+    com.hsf302.ch4.pojo.Department getWithStudents(String code);   // TODO 16b
 }

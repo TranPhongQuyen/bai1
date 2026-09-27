@@ -33,4 +33,15 @@ public class DepartmentServiceImpl implements DepartmentService {
     public java.util.List<com.hsf302.ch4.dto.DepartmentStatDTO> getStatistics() {
         return departmentRepository.getDepartmentStats();
     }
+
+    @Override
+    public java.util.Optional<com.hsf302.ch4.pojo.Department> findByCode(String code) {
+        return departmentRepository.findByCode(code);
+    }
+
+    @Override
+    public com.hsf302.ch4.pojo.Department getWithStudents(String code) {
+        return departmentRepository.findByCodeWithStudents(code)
+                .orElseThrow(() -> new IllegalArgumentException("Department not found: " + code));
+    }
 }
