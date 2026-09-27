@@ -11,4 +11,7 @@ public interface StudentService {
     java.util.List<com.hsf302.ch4.pojo.Student> searchByName(String keyword);        // TODO 9a
     java.util.List<com.hsf302.ch4.pojo.Student> findByEmailDomain(String domain);    // TODO 9b
     java.util.List<com.hsf302.ch4.pojo.Student> findWithoutEmail();                  // TODO 9c
+    java.util.List<com.hsf302.ch4.pojo.Student> findByGpaRange(double min, double max);   // TODO 10a
+    java.util.List<com.hsf302.ch4.pojo.Student> findActiveByGender(com.hsf302.ch4.pojo.Gender gender);        // TODO 10b
+    java.util.List<com.hsf302.ch4.pojo.Student> findBornAfter(java.time.LocalDate date);            // TODO 10c
 }

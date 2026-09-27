@@ -69,4 +69,22 @@ public class StudentServiceImpl implements StudentService {
     public java.util.List<com.hsf302.ch4.pojo.Student> findWithoutEmail() {
         return studentRepository.findByEmailIsNull();
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findByGpaRange(double min, double max) {
+        if (min > max) {
+            throw new IllegalArgumentException("min GPA phải <= max GPA");
+        }
+        return studentRepository.findByGpaBetweenOrderByGpaDesc(min, max);
+    }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findActiveByGender(com.hsf302.ch4.pojo.Gender gender) {
+        return studentRepository.findByGenderAndActiveTrue(gender);
+    }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findBornAfter(java.time.LocalDate date) {
+        return studentRepository.findByDobAfter(date);
+    }
 }

@@ -28,7 +28,7 @@ public class ExerciseRunner implements CommandLineRunner {
     }
 
     private void partB() { todo6(); todo7(); }
-    private void partC() { todo8(); todo9(); /* todo10(); todo11(); */ }
+    private void partC() { todo8(); todo9(); todo10(); /* todo11(); */ }
     private void partD() { /* todo12(); todo13(); todo14(); todo15(); todo16(); todo17(); todo18(); todo19(); */ }
     private void bonus() { /* todo24(); */ }
     private void partE() { /* todo20(); todo21(); todo22(); todo23(); */ }
@@ -92,5 +92,12 @@ public class ExerciseRunner implements CommandLineRunner {
         printList("fullName contains 'nguyen'", studentService.searchByName("nguyen"));
         printList("email domain 'gmail.com'", studentService.findByEmailDomain("gmail.com"));
         printList("email is null", studentService.findWithoutEmail());
+    }
+
+    private void todo10() {
+        title("TODO 10: Between / And / True / After");
+        printList("GPA in [3.0, 3.6] desc", studentService.findByGpaRange(3.0, 3.6));
+        printList("MALE & active", studentService.findActiveByGender(com.hsf302.ch4.pojo.Gender.MALE));
+        printList("dob after 2005-01-01", studentService.findBornAfter(java.time.LocalDate.of(2005, 1, 1)));
     }
 }
