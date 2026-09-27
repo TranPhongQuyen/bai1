@@ -14,4 +14,7 @@ public interface StudentService {
     java.util.List<com.hsf302.ch4.pojo.Student> findByGpaRange(double min, double max);   // TODO 10a
     java.util.List<com.hsf302.ch4.pojo.Student> findActiveByGender(com.hsf302.ch4.pojo.Gender gender);        // TODO 10b
     java.util.List<com.hsf302.ch4.pojo.Student> findBornAfter(java.time.LocalDate date);            // TODO 10c
+    java.util.List<com.hsf302.ch4.pojo.Student> findByDepartment(String deptCode);    // TODO 11a
+    long countByDepartment(String deptCode);            // TODO 11b (dùng lại ở TODO 22)
+    java.util.List<com.hsf302.ch4.pojo.Student> findTop3ByGpa();                      // TODO 11c
 }

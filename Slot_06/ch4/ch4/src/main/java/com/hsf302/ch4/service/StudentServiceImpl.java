@@ -87,4 +87,19 @@ public class StudentServiceImpl implements StudentService {
     public java.util.List<com.hsf302.ch4.pojo.Student> findBornAfter(java.time.LocalDate date) {
         return studentRepository.findByDobAfter(date);
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findByDepartment(String deptCode) {
+        return studentRepository.findByDepartment_CodeOrderByFullNameAsc(deptCode);
+    }
+
+    @Override
+    public long countByDepartment(String deptCode) {
+        return studentRepository.countByDepartment_Code(deptCode);
+    }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findTop3ByGpa() {
+        return studentRepository.findTop3ByOrderByGpaDesc();
+    }
 }

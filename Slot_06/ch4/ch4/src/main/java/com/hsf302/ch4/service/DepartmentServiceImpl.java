@@ -23,4 +23,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     public boolean existsById(Long id) {
         return departmentRepository.existsById(id);
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Department> findDepartmentsWithoutStudents() {
+        return departmentRepository.findByStudentsIsEmpty();
+    }
 }

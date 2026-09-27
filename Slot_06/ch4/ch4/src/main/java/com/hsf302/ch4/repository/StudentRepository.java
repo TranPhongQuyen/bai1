@@ -15,4 +15,7 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
     java.util.List<Student> findByGpaBetweenOrderByGpaDesc(double min, double max);   // gpa BETWEEN ? AND ? ORDER BY gpa DESC
     java.util.List<Student> findByGenderAndActiveTrue(com.hsf302.ch4.pojo.Gender gender);                  // gender = ? AND active = 1
     java.util.List<Student> findByDobAfter(java.time.LocalDate date);                            // dob > ?
+    java.util.List<Student> findByDepartment_CodeOrderByFullNameAsc(String code);   // JOIN departments ... WHERE d.code = ?
+    long countByDepartment_Code(String code);
+    java.util.List<Student> findTop3ByOrderByGpaDesc();                              // SELECT TOP 3 ... ORDER BY gpa DESC
 }
