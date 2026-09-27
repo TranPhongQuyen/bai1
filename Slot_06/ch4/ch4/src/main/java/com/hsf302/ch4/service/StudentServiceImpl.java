@@ -12,4 +12,13 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
 
+    @Override
+    public long count() {
+        return studentRepository.count();
+    }
+
+    @Override
+    public java.util.Optional<com.hsf302.ch4.pojo.Student> findById(Long id) {
+        return studentRepository.findById(id);
+    }
 }
