@@ -9,4 +9,7 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
     java.util.Optional<Student> findByStudentCode(String studentCode);   // WHERE student_code = ?
     boolean existsByEmail(String email);                        // kiểm tra tồn tại
     long countByActiveTrue();                                   // WHERE active = 1 (không cần tham số)
+    java.util.List<Student> findByFullNameContainingIgnoreCase(String keyword);   // UPPER(full_name) LIKE UPPER('%kw%')
+    java.util.List<Student> findByEmailEndingWith(String suffix);                 // email LIKE '%suffix'
+    java.util.List<Student> findByEmailIsNull();                                  // email IS NULL
 }

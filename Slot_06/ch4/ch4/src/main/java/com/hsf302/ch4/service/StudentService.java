@@ -8,4 +8,7 @@ public interface StudentService {
     java.util.Optional<com.hsf302.ch4.pojo.Student> findByStudentCode(String studentCode);   // TODO 8a
     boolean isEmailExisted(String email);                      // TODO 8b
     long countActive();                                        // TODO 8c
+    java.util.List<com.hsf302.ch4.pojo.Student> searchByName(String keyword);        // TODO 9a
+    java.util.List<com.hsf302.ch4.pojo.Student> findByEmailDomain(String domain);    // TODO 9b
+    java.util.List<com.hsf302.ch4.pojo.Student> findWithoutEmail();                  // TODO 9c
 }

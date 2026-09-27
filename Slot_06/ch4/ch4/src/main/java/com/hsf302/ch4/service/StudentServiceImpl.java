@@ -50,4 +50,23 @@ public class StudentServiceImpl implements StudentService {
     public long countActive() {
         return studentRepository.countByActiveTrue();
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> searchByName(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return java.util.List.of();                              // từ khoá rỗng → không tìm
+        }
+        return studentRepository.findByFullNameContainingIgnoreCase(keyword.trim());
+    }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findByEmailDomain(String domain) {
+        String suffix = domain.startsWith("@") ? domain : "@" + domain;   // "gmail.com" → "@gmail.com"
+        return studentRepository.findByEmailEndingWith(suffix);
+    }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findWithoutEmail() {
+        return studentRepository.findByEmailIsNull();
+    }
 }
