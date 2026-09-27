@@ -17,4 +17,6 @@ public interface StudentService {
     java.util.List<com.hsf302.ch4.pojo.Student> findByDepartment(String deptCode);    // TODO 11a
     long countByDepartment(String deptCode);            // TODO 11b (dùng lại ở TODO 22)
     java.util.List<com.hsf302.ch4.pojo.Student> findTop3ByGpa();                      // TODO 11c
+    java.util.List<com.hsf302.ch4.pojo.Student> findGoodStudents(String deptCode, double minGpa);   // TODO 12
+    java.util.List<com.hsf302.ch4.pojo.Student> searchByKeyword(String keyword);   // TODO 13
 }

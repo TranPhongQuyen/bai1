@@ -102,4 +102,17 @@ public class StudentServiceImpl implements StudentService {
     public java.util.List<com.hsf302.ch4.pojo.Student> findTop3ByGpa() {
         return studentRepository.findTop3ByOrderByGpaDesc();
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findGoodStudents(String deptCode, double minGpa) {
+        return studentRepository.findGoodStudentsInDepartment(deptCode, minGpa);
+    }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> searchByKeyword(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return java.util.List.of();
+        }
+        return studentRepository.searchByKeyword(keyword.trim());
+    }
 }
