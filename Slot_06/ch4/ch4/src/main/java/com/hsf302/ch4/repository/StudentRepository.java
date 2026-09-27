@@ -30,4 +30,9 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
            "   OR LOWER(s.email)    LIKE LOWER(CONCAT('%', :kw, '%')) " +
            "ORDER BY s.fullName")
     java.util.List<Student> searchByKeyword(@org.springframework.data.repository.query.Param("kw") String keyword);
+
+    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s " +
+           "WHERE s.gpa > (SELECT AVG(s2.gpa) FROM Student s2) " +
+           "ORDER BY s.gpa DESC")
+    java.util.List<Student> findAboveAverageGpa();
 }

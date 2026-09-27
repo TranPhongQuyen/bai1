@@ -19,4 +19,5 @@ public interface StudentService {
     java.util.List<com.hsf302.ch4.pojo.Student> findTop3ByGpa();                      // TODO 11c
     java.util.List<com.hsf302.ch4.pojo.Student> findGoodStudents(String deptCode, double minGpa);   // TODO 12
     java.util.List<com.hsf302.ch4.pojo.Student> searchByKeyword(String keyword);   // TODO 13
+    java.util.List<com.hsf302.ch4.pojo.Student> findAboveAverageGpa();   // TODO 15
 }

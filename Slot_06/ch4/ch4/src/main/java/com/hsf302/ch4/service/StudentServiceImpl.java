@@ -115,4 +115,9 @@ public class StudentServiceImpl implements StudentService {
         }
         return studentRepository.searchByKeyword(keyword.trim());
     }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Student> findAboveAverageGpa() {
+        return studentRepository.findAboveAverageGpa();
+    }
 }
