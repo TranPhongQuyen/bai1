@@ -148,4 +148,28 @@ public class StudentServiceImpl implements StudentService {
                 .and(com.hsf302.ch4.specification.StudentSpecs.isActive(active));
         return studentRepository.findAll(spec, org.springframework.data.domain.Sort.by("fullName"));
     }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public com.hsf302.ch4.pojo.Student updateGpa(String studentCode, double newGpa) {
+        if (newGpa < 0 || newGpa > 4) {
+            throw new IllegalArgumentException("GPA phải trong khoảng [0, 4]");
+        }
+        com.hsf302.ch4.pojo.Student s = studentRepository.findByStudentCode(studentCode)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentCode));
+        s.setGpa(newGpa);
+        return s;
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public int deactivateLowGpa(double threshold) {
+        return studentRepository.deactivateLowGpa(threshold);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public long deleteInactiveStudents() {
+        return studentRepository.deleteByActiveFalse();
+    }
 }

@@ -52,4 +52,14 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
 
     @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s WHERE s.department.code = :code AND s.active = true")
     org.springframework.data.domain.Page<Student> findActiveByDepartment(@org.springframework.data.repository.query.Param("code") String code, org.springframework.data.domain.Pageable pageable);
+
+    @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true, flushAutomatically = true)
+    @org.springframework.data.jpa.repository.Query("UPDATE Student s SET s.active = false WHERE s.gpa < :threshold AND s.active = true")
+    int deactivateLowGpa(@org.springframework.data.repository.query.Param("threshold") double threshold);
+
+    @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true, flushAutomatically = true)
+    @org.springframework.data.jpa.repository.Query("UPDATE Student s SET s.department = :to WHERE s.department = :from")
+    int transferStudents(@org.springframework.data.repository.query.Param("from") com.hsf302.ch4.pojo.Department from, @org.springframework.data.repository.query.Param("to") com.hsf302.ch4.pojo.Department to);
+
+    long deleteByActiveFalse();
 }

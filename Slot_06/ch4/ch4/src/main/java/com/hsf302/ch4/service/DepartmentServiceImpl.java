@@ -44,4 +44,25 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository.findByCodeWithStudents(code)
                 .orElseThrow(() -> new IllegalArgumentException("Department not found: " + code));
     }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public int transferStudentsAndDelete(String fromCode, String toCode) {
+        if (fromCode.equals(toCode)) {
+            throw new IllegalArgumentException("Khoa nguồn và khoa đích phải khác nhau");
+        }
+        com.hsf302.ch4.pojo.Department from = departmentRepository.findByCode(fromCode)
+                .orElseThrow(() -> new IllegalArgumentException("Department not found: " + fromCode));
+        com.hsf302.ch4.pojo.Department to = departmentRepository.findByCode(toCode)
+                .orElseThrow(() -> new IllegalArgumentException("Department not found: " + toCode));
+
+        int moved = studentRepository.transferStudents(from, to);   // 1. chuyển FK sang khoa mới
+        departmentRepository.deleteById(from.getId());              // 2. khoa cũ đã rỗng → xoá được
+        return moved;
+    }
+
+    @Override
+    public java.util.List<com.hsf302.ch4.pojo.Department> findAll() {
+        return departmentRepository.findAll(org.springframework.data.domain.Sort.by("id"));
+    }
 }
