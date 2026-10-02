@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
 @Entity
 @Table(name = "students")
 @Getter
@@ -54,15 +55,16 @@ public class Student {
     private Set<Course> courses = new HashSet<>();
 
     public void enroll(Course c) {
-        courses.add(c);
-        c.getStudents().add(this);
+        courses.add(c);                 // owning side → Hibernate INSERT vào student_courses
+        c.getStudents().add(this);      // inverse side → giữ object Java nhất quán
     }
 
     public void unenroll(Course c) {
-        courses.remove(c);
+        courses.remove(c);              // owning side → Hibernate DELETE khỏi student_courses
         c.getStudents().remove(this);
     }
 
+    // equals/hashCode theo business key studentCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -75,10 +77,10 @@ public class Student {
         return Objects.hashCode(studentCode);
     }
 
+    // toString() của Exercise 1 giữ nguyên — KHÔNG thêm courses
     @Override
     public String toString() {
         return String.format("%s | %-15s | %-20s | %.1f | %s",
                 studentCode, fullName, email, gpa, active ? "active" : "inactive");
-        // KHÔNG in department → tránh LazyInitializationException
     }
 }
