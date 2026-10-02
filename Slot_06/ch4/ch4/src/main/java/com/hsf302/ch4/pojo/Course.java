@@ -30,12 +30,11 @@ public class Course {
     private Integer credits;
 
     @Column(nullable = false)
-    private Integer capacity;              // số chỗ tối đa
+    private Integer capacity;
 
     @Column(nullable = false, length = 10)
-    private String semester;               // "FA26", "SU26"...
+    private String semester;
 
-    // Inverse side: "courses" là TÊN FIELD bên Student
     @ManyToMany(mappedBy = "courses")
     private Set<Student> students = new HashSet<>();
 
@@ -47,12 +46,11 @@ public class Course {
         this.semester = semester;
     }
 
-    // equals/hashCode theo BUSINESS KEY (code) — không dùng id
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Course other)) return false;
-        return code != null && code.equals(other.getCode());   // dùng getter: an toàn với Hibernate proxy
+        return code != null && code.equals(other.getCode());
     }
 
     @Override
@@ -63,6 +61,6 @@ public class Course {
     @Override
     public String toString() {
         return String.format("%s | %-40s | %d credits | cap %d | %s",
-                code, name, credits, capacity, semester);        // KHÔNG in students
+                code, name, credits, capacity, semester);
     }
 }
