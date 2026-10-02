@@ -1,65 +1,91 @@
 package com.hsf302.ch4.repository;
-
+import com.hsf302.ch4.dto.CourseEnrollmentCount;
+import com.hsf302.ch4.dto.CourseStatDTO;
+import com.hsf302.ch4.dto.EnrollmentView;
+import com.hsf302.ch4.dto.StudentCreditDTO;
+import com.hsf302.ch4.dto.StudentSummary;
+import com.hsf302.ch4.pojo.Gender;
 import com.hsf302.ch4.pojo.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-public interface StudentRepository extends JpaRepository<Student, Long>,
-                                           JpaSpecificationExecutor<Student> {
-    java.util.Optional<Student> findByStudentCode(String studentCode);   // WHERE student_code = ?
-    boolean existsByEmail(String email);                        // kiểm tra tồn tại
-    long countByActiveTrue();                                   // WHERE active = 1 (không cần tham số)
-    java.util.List<Student> findByFullNameContainingIgnoreCase(String keyword);   // UPPER(full_name) LIKE UPPER('%kw%')
-    java.util.List<Student> findByEmailEndingWith(String suffix);                 // email LIKE '%suffix'
-    java.util.List<Student> findByEmailIsNull();                                  // email IS NULL
-    java.util.List<Student> findByGpaBetweenOrderByGpaDesc(double min, double max);   // gpa BETWEEN ? AND ? ORDER BY gpa DESC
-    java.util.List<Student> findByGenderAndActiveTrue(com.hsf302.ch4.pojo.Gender gender);                  // gender = ? AND active = 1
-    java.util.List<Student> findByDobAfter(java.time.LocalDate date);                            // dob > ?
-    java.util.List<Student> findByDepartment_CodeOrderByFullNameAsc(String code);   // JOIN departments ... WHERE d.code = ?
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpecificationExecutor<Student> {
+    List<Student> findByOrderByGpaDesc();
+    Optional<Student> findByStudentCode(String studentCode);
+    boolean existsByEmail(String email);
+    long countByActiveTrue();
+    List<Student> findByFullNameContainingIgnoreCase(String keyword);
+    List<Student> findByEmailEndingWith(String suffix);
+    List<Student> findByEmailIsNull();
+    List<Student> findByGpaBetweenOrderByGpaDesc(double min, double max);
+    List<Student> findByGenderAndActiveTrue(Gender gender);
+    List<Student> findByDobAfter(LocalDate date);
+    List<Student> findByDepartment_CodeOrderByFullNameAsc(String code);
     long countByDepartment_Code(String code);
-    java.util.List<Student> findTop3ByOrderByGpaDesc();                              // SELECT TOP 3 ... ORDER BY gpa DESC
-
-    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s " +
-           "WHERE s.department.code = :code AND s.gpa >= :minGpa " +
-           "ORDER BY s.gpa DESC")
-    java.util.List<Student> findGoodStudentsInDepartment(@org.springframework.data.repository.query.Param("code") String code,
-                                               @org.springframework.data.repository.query.Param("minGpa") double minGpa);
-
-    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s " +
-           "WHERE LOWER(s.fullName) LIKE LOWER(CONCAT('%', :kw, '%')) " +
-           "   OR LOWER(s.email)    LIKE LOWER(CONCAT('%', :kw, '%')) " +
-           "ORDER BY s.fullName")
-    java.util.List<Student> searchByKeyword(@org.springframework.data.repository.query.Param("kw") String keyword);
-
-    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s " +
-           "WHERE s.gpa > (SELECT AVG(s2.gpa) FROM Student s2) " +
-           "ORDER BY s.gpa DESC")
-    java.util.List<Student> findAboveAverageGpa();
-
-    @org.springframework.data.jpa.repository.Query(value = "SELECT TOP (:n) s.* " +
-                   "FROM students s JOIN departments d ON s.department_id = d.id " +
-                   "WHERE d.code = :code " +
-                   "ORDER BY s.gpa DESC",
-           nativeQuery = true)
-    java.util.List<Student> findTopNByDepartmentNative(@org.springframework.data.repository.query.Param("code") String code, @org.springframework.data.repository.query.Param("n") int n);
-
-    @org.springframework.data.jpa.repository.Query("SELECT s.studentCode AS studentCode, s.fullName AS fullName, " +
-           "       s.gpa AS gpa, d.name AS departmentName " +
-           "FROM Student s JOIN s.department d " +
-           "WHERE s.active = true " +
-           "ORDER BY s.fullName")
-    java.util.List<com.hsf302.ch4.dto.StudentSummary> findActiveSummaries();
-
-    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s WHERE s.department.code = :code AND s.active = true")
-    org.springframework.data.domain.Page<Student> findActiveByDepartment(@org.springframework.data.repository.query.Param("code") String code, org.springframework.data.domain.Pageable pageable);
-
-    @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true, flushAutomatically = true)
-    @org.springframework.data.jpa.repository.Query("UPDATE Student s SET s.active = false WHERE s.gpa < :threshold AND s.active = true")
-    int deactivateLowGpa(@org.springframework.data.repository.query.Param("threshold") double threshold);
-
-    @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true, flushAutomatically = true)
-    @org.springframework.data.jpa.repository.Query("UPDATE Student s SET s.department = :to WHERE s.department = :from")
-    int transferStudents(@org.springframework.data.repository.query.Param("from") com.hsf302.ch4.pojo.Department from, @org.springframework.data.repository.query.Param("to") com.hsf302.ch4.pojo.Department to);
-
+    List<Student> findTop3ByOrderByGpaDesc();
+    
+    @Query("SELECT s FROM Student s WHERE s.department.code = :deptCode AND s.gpa >= :minGpa")
+    List<Student> findGoodStudentsInDepartment(@Param("deptCode") String deptCode, @Param("minGpa") double minGpa);
+    
+    @Query("SELECT s FROM Student s WHERE LOWER(s.fullName) LIKE LOWER(CONCAT('%', :kw, '%')) OR LOWER(s.email) LIKE LOWER(CONCAT('%', :kw, '%'))")
+    List<Student> searchByKeyword(@Param("kw") String keyword);
+    
+    @Query("SELECT s FROM Student s WHERE s.gpa > (SELECT AVG(s2.gpa) FROM Student s2)")
+    List<Student> findAboveAverageGpa();
+    
+    @Query(value = "SELECT TOP (:n) * FROM students s JOIN departments d ON s.department_id = d.id WHERE d.code = :deptCode ORDER BY s.gpa DESC", nativeQuery = true)
+    List<Student> findTopNByDepartmentNative(@Param("deptCode") String deptCode, @Param("n") int n);
+    
+    @Query("SELECT s.studentCode AS studentCode, s.fullName AS fullName, s.gpa AS gpa, s.department.name AS departmentName FROM Student s WHERE s.active = true")
+    List<StudentSummary> findActiveSummaries();
+    
+    Page<Student> findActiveByDepartment(String deptCode, Pageable pageable);
+    
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Student s SET s.active = false WHERE s.gpa < :minGpa")
+    int deactivateLowGpa(@Param("minGpa") double minGpa);
+    
+    @Modifying
+    @Query("UPDATE Student s SET s.department = (SELECT d FROM Department d WHERE d.code = :newDeptCode) WHERE s.department.code = :oldDeptCode")
+    int transferStudents(@Param("oldDeptCode") String oldDeptCode, @Param("newDeptCode") String newDeptCode);
+    
     long deleteByActiveFalse();
+
+    // Exercise 2 additions
+    List<Student> findByCourses_CodeOrderByFullNameAsc(String courseCode);
+    long countByCourses_CodeAndActiveTrue(String courseCode);
+    List<Student> findByCoursesIsEmpty();
+    boolean existsByStudentCodeAndCourses_Code(String studentCode, String courseCode);
+
+    @Query("SELECT s FROM Student s JOIN s.courses c WHERE c.code = :courseCode AND s.gpa >= :minGpa")
+    List<Student> findByCourseAndMinGpa(@Param("courseCode") String courseCode, @Param("minGpa") double minGpa);
+
+    @Query("SELECT new com.hsf302.ch4.dto.CourseStatDTO(c.code, c.name, COUNT(s), COALESCE(AVG(s.gpa), 0.0)) FROM Course c LEFT JOIN c.students s GROUP BY c.code, c.name")
+    List<CourseStatDTO> getCourseStatistics();
+
+    @Query("SELECT new com.hsf302.ch4.dto.StudentCreditDTO(s.studentCode, s.fullName, SUM(c.credits)) FROM Student s JOIN s.courses c GROUP BY s.id, s.studentCode, s.fullName HAVING SUM(c.credits) >= :minCredits")
+    List<StudentCreditDTO> findStudentsWithMinCredits(@Param("minCredits") long minCredits);
+
+    @Query("SELECT s FROM Student s WHERE SIZE(s.courses) > :n")
+    List<Student> findStudentsEnrolledInMoreThan(@Param("n") int n);
+
+    @Query("SELECT s FROM Student s LEFT JOIN FETCH s.courses WHERE s.studentCode = :studentCode")
+    Optional<Student> findByStudentCodeWithCourses(@Param("studentCode") String studentCode);
+
+    @Query(value = "SELECT c.code AS courseCode, COUNT(sc.student_id) AS enrollmentCount FROM courses c JOIN student_courses sc ON c.id = sc.course_id GROUP BY c.code ORDER BY enrollmentCount DESC", nativeQuery = true)
+    List<CourseEnrollmentCount> getTopEnrollments();
+
+    @Query("SELECT s.studentCode AS studentCode, s.fullName AS fullName, c.code AS courseCode, c.semester AS semester FROM Student s JOIN s.courses c JOIN s.department d WHERE d.code = :deptCode")
+    List<EnrollmentView> getEnrollmentsByDepartment(@Param("deptCode") String deptCode);
+
+    @Query(value = "SELECT s FROM Student s JOIN s.courses c WHERE c.code = :courseCode",
+           countQuery = "SELECT COUNT(s) FROM Student s JOIN s.courses c WHERE c.code = :courseCode")
+    Page<Student> findPageByCourseCode(@Param("courseCode") String courseCode, Pageable pageable);
 }
