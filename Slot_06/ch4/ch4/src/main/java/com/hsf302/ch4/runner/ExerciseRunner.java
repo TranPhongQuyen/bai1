@@ -9,8 +9,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
+import org.springframework.context.annotation.Profile;
+
 @Component
 @Order(2)
+@Profile("ex1")
 @RequiredArgsConstructor
 public class ExerciseRunner implements CommandLineRunner {
 
