@@ -4,6 +4,7 @@ import com.hsf302.ch4.service.DepartmentService;
 import com.hsf302.ch4.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import java.util.Collection;
 
 @Component
 @Order(2)
+@Profile("ex1")
 @RequiredArgsConstructor
 public class ExerciseRunner implements CommandLineRunner {
 
