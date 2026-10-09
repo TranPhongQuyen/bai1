@@ -1,9 +1,15 @@
 package com.hsf302.chapter6.controller;
 
+import com.hsf302.chapter6.dto.StudentForm;
+import com.hsf302.chapter6.entity.Major;
 import com.hsf302.chapter6.entity.Student;
 import com.hsf302.chapter6.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,22 +26,33 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    // Constructor injection (recommended) — 1 constructor nên không cần @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
-    /** Chạy trước MỌI handler trong controller → view nào cũng có ${majors} */
     @ModelAttribute("majors")
-    public List<String> majors() {
+    public List<Major> majors() {
         return studentService.getMajors();
     }
 
     // ==================== READ ALL ====================
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("students", studentService.findAll());
+    public String list(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                       @RequestParam(value = "page", defaultValue = "0") int page,
+                       @RequestParam(value = "size", defaultValue = "5") int size,
+                       @RequestParam(value = "sort", defaultValue = "id,asc") String sort,
+                       Model model) {
+        String[] sortParams = sort.split(",");
+        Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortParams[0]));
+        
+        Page<Student> studentPage = studentService.findAll(keyword, pageable);
+        model.addAttribute("page", studentPage);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentSort", sortParams[0]);
+        model.addAttribute("currentDir", direction.name().toLowerCase());
+        model.addAttribute("reverseDir", direction == Sort.Direction.ASC ? "desc" : "asc");
         return "students/list";
     }
 
@@ -58,25 +75,22 @@ public class StudentController {
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
-        model.addAttribute("student", new Student());
+        model.addAttribute("student", new StudentForm());
         return formView(model, false);
     }
 
     @PostMapping("/create")
-    public String create(@Valid @ModelAttribute("student") Student student,
+    public String create(@Valid @ModelAttribute("student") StudentForm student,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes ra) {
-        // 1. Kiểm tra nghiệp vụ: email trùng (chỉ khi email đã hợp lệ về định dạng)
         if (!bindingResult.hasFieldErrors("email")
                 && studentService.isEmailTaken(student.getEmail(), null)) {
             bindingResult.rejectValue("email", "duplicate", "Email đã tồn tại");
         }
-        // 2. Có lỗi → quay lại form (KHÔNG redirect để giữ dữ liệu + lỗi)
         if (bindingResult.hasErrors()) {
             return formView(model, false);
         }
-        // 3. Lưu DB — vẫn bắt lỗi UNIQUE phòng trường hợp 2 người submit cùng lúc
         try {
             studentService.create(student);
         } catch (DataIntegrityViolationException e) {
@@ -84,7 +98,7 @@ public class StudentController {
             return formView(model, false);
         }
         ra.addFlashAttribute("successMsg", "Thêm sinh viên thành công!");
-        return "redirect:/students";                      // PRG pattern
+        return "redirect:/students";
     }
 
     // ==================== UPDATE ====================
@@ -93,7 +107,14 @@ public class StudentController {
     public String showEditForm(@PathVariable("id") Long id, Model model, RedirectAttributes ra) {
         return studentService.findById(id)
                 .map(student -> {
-                    model.addAttribute("student", student);
+                    StudentForm form = new StudentForm();
+                    form.setId(student.getId());
+                    form.setName(student.getName());
+                    form.setEmail(student.getEmail());
+                    form.setAge(student.getAge());
+                    form.setGpa(student.getGpa());
+                    form.setMajorId(student.getMajor().getId());
+                    model.addAttribute("student", form);
                     return formView(model, true);
                 })
                 .orElseGet(() -> {
@@ -104,11 +125,11 @@ public class StudentController {
 
     @PostMapping("/{id}/edit")
     public String update(@PathVariable("id") Long id,
-                         @Valid @ModelAttribute("student") Student student,
+                         @Valid @ModelAttribute("student") StudentForm student,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes ra) {
-        student.setId(id);   // form không gửi id → gắn từ URL để khi trả lỗi, form action vẫn đúng
+        student.setId(id);
 
         if (!bindingResult.hasFieldErrors("email")
                 && studentService.isEmailTaken(student.getEmail(), id)) {

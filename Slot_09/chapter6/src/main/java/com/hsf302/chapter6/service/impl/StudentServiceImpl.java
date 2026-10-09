@@ -1,9 +1,13 @@
 package com.hsf302.chapter6.service.impl;
 
+import com.hsf302.chapter6.dto.StudentForm;
+import com.hsf302.chapter6.entity.Major;
 import com.hsf302.chapter6.entity.Student;
+import com.hsf302.chapter6.repository.MajorRepository;
 import com.hsf302.chapter6.repository.StudentRepository;
 import com.hsf302.chapter6.service.StudentService;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +19,19 @@ import java.util.Optional;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
+    private final MajorRepository majorRepository;
 
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, MajorRepository majorRepository) {
         this.studentRepository = studentRepository;
+        this.majorRepository = majorRepository;
     }
 
     @Override
-    public List<Student> findAll() {
-        return studentRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public Page<Student> findAll(String keyword, Pageable pageable) {
+        if (keyword != null && !keyword.isBlank()) {
+            return studentRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword.trim(), keyword.trim(), pageable);
+        }
+        return studentRepository.findAll(pageable);
     }
 
     @Override
@@ -32,23 +41,30 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional                      // ghi dữ liệu → bỏ readOnly
-    public Student create(Student student) {
-        student.setId(null);            // luôn INSERT, không bao giờ ghi đè bản ghi cũ
+    public Student create(StudentForm form) {
+        Major major = majorRepository.findById(form.getMajorId())
+                .orElseThrow(() -> new IllegalArgumentException("Chuyên ngành không hợp lệ"));
+        Student student = new Student();
+        student.setName(form.getName());
+        student.setEmail(form.getEmail());
+        student.setAge(form.getAge());
+        student.setGpa(form.getGpa());
+        student.setMajor(major);
         return studentRepository.save(student);
     }
 
     @Override
     @Transactional
-    public boolean update(Long id, Student data) {
+    public boolean update(Long id, StudentForm data) {
         return studentRepository.findById(id)
                 .map(existing -> {
+                    Major major = majorRepository.findById(data.getMajorId())
+                            .orElseThrow(() -> new IllegalArgumentException("Chuyên ngành không hợp lệ"));
                     existing.setName(data.getName());
                     existing.setEmail(data.getEmail());
                     existing.setAge(data.getAge());
-                    existing.setMajor(data.getMajor());
+                    existing.setMajor(major);
                     existing.setGpa(data.getGpa());
-                    // Không cần gọi save(): entity đang "managed",
-                    // Hibernate tự sinh UPDATE khi transaction commit (dirty checking)
                     return true;
                 })
                 .orElse(false);
@@ -73,7 +89,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<String> getMajors() {
-        return List.of("CNTT", "KTPM", "HTTT", "ATTT", "MMT");
+    public List<Major> getMajors() {
+        return majorRepository.findAll();
     }
 }

@@ -30,4 +30,20 @@ public class CourseServiceImpl implements CourseService {
         for (Student s : students) { s.unenroll(course); }
         courseRepository.delete(course);
     }
+
+    @Override
+    public List<Course> testCreditsBetween(int min, int max) {
+        // You can test with either the Derived Query or the Custom Query
+        return courseRepository.findByCreditsBetween(min, max);
+    }
+
+    @Override
+    public long testCountCreditsGreaterThan(int credits) {
+        return courseRepository.countByCreditsGreaterThan(credits);
+    }
+
+    @Override
+    public List<Course> testSearchByName(String keyword) {
+        return courseRepository.findByNameContainingIgnoreCase(keyword);
+    }
 }
