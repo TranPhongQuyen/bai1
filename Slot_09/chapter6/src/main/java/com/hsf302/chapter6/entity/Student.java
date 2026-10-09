@@ -28,9 +28,10 @@ public class Student {
     @Column(name = "age", nullable = false)
     private Integer age;
 
-    @NotBlank(message = "Chuyên ngành không được để trống")
-    @Column(name = "major", nullable = false, length = 20)
-    private String major;
+    @NotNull(message = "Chuyên ngành không được để trống")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "major_id")
+    private Major major;
 
     @NotNull(message = "GPA không được để trống")
     @DecimalMin(value = "0.0", message = "GPA tối thiểu là 0.0")
@@ -44,7 +45,7 @@ public class Student {
     public Student() {}
 
     /** Dùng cho seed data — không có id vì DB tự sinh */
-    public Student(String name, String email, Integer age, String major, Double gpa) {
+    public Student(String name, String email, Integer age, Major major, Double gpa) {
         this.name = name;
         this.email = email;
         this.age = age;
@@ -66,8 +67,8 @@ public class Student {
     public Integer getAge() { return age; }
     public void setAge(Integer age) { this.age = age; }
 
-    public String getMajor() { return major; }
-    public void setMajor(String major) { this.major = major; }
+    public Major getMajor() { return major; }
+    public void setMajor(Major major) { this.major = major; }
 
     public Double getGpa() { return gpa; }
     public void setGpa(Double gpa) { this.gpa = gpa; }
