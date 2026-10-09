@@ -74,14 +74,14 @@
 
                         <!-- Chuyên ngành -->
                         <div class="mb-3">
-                            <label for="major" class="form-label fw-semibold">
+                            <label for="majorId" class="form-label fw-semibold">
                                 Chuyên ngành <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select" th:field="*{major}" th:errorclass="is-invalid">
+                            <select class="form-select" th:field="*{majorId}" th:errorclass="is-invalid">
                                 <option value="">-- Chọn chuyên ngành --</option>
-                                <option th:each="m : ${majors}" th:value="${m}" th:text="${m}"></option>
+                                <option th:each="m : ${majors}" th:value="${m.id}" th:text="${m.name}"></option>
                             </select>
-                            <div class="invalid-feedback" th:errors="*{major}">Lỗi chuyên ngành</div>
+                            <div class="invalid-feedback" th:errors="*{majorId}">Lỗi chuyên ngành</div>
                         </div>
 
                         <!-- GPA -->
