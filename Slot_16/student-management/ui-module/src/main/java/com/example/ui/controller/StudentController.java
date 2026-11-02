@@ -1,5 +1,7 @@
 package com.example.ui.controller;
 
+import com.example.data.exception.StudentNotFoundException;
+import com.example.data.exception.ValidationException;
 import com.example.data.pojo.Student;
 import com.example.data.service.StudentService;
 import javafx.collections.FXCollections;
@@ -17,33 +19,25 @@ public class StudentController {
     @FXML private Label messageLabel, statusLabel;
 
     private final StudentService studentService;
-
-    // TODO 5.1: ObservableList duy nhất
     private final ObservableList<Student> data = FXCollections.observableArrayList();
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
-    // TODO 5.2: initialize
     @FXML
     public void initialize() {
         tableView.setItems(data);
-
-        // Listener: chọn dòng → điền form; bỏ chọn → xoá form
-        tableView.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldVal, newVal) -> fillForm(newVal));
-
-        // Disable Update/Delete khi chưa chọn dòng nào
-        btnUpdate.disableProperty().bind(
-                tableView.getSelectionModel().selectedItemProperty().isNull());
-        btnDelete.disableProperty().bind(
-                tableView.getSelectionModel().selectedItemProperty().isNull());
-
+        tableView.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldSel, newSel) -> {
+                    if (newSel != null) fillForm(newSel);
+                });
+        var noSelection = tableView.getSelectionModel().selectedItemProperty().isNull();
+        btnUpdate.disableProperty().bind(noSelection);
+        btnDelete.disableProperty().bind(noSelection);
         loadData();
     }
 
-    // TODO 5.3: load toàn bộ data
     private void loadData() {
         try {
             data.setAll(studentService.findAll());
@@ -54,15 +48,13 @@ public class StudentController {
         }
     }
 
-    // TODO 5.4: handleSearch / handleRefresh
     @FXML
     private void handleSearch() {
         try {
-            String kw = searchField.getText();
-            data.setAll(studentService.search(kw));
+            data.setAll(studentService.search(searchField.getText()));
             statusLabel.setText("Found " + data.size() + " students");
         } catch (Exception e) {
-            showError("Search error: " + e.getMessage());
+            showError(e.getMessage());
         }
     }
 
@@ -70,37 +62,88 @@ public class StudentController {
     private void handleRefresh() {
         searchField.clear();
         loadData();
-        messageLabel.setText("");
     }
 
-    // TODO 5.5: fillForm, showInfo, showError
-    private void fillForm(Student s) {
-        if (s == null) {
+    private Student readForm() {
+        String ageText = ageField.getText() == null ? "" : ageField.getText().trim();
+        if (ageText.isEmpty()) throw new ValidationException("Age is required");
+        int age;
+        try {
+            age = Integer.parseInt(ageText);
+        } catch (NumberFormatException e) {
+            throw new ValidationException("Age must be a number");
+        }
+        return new Student(nameField.getText(), emailField.getText(), age);
+    }
+
+    @FXML
+    private void handleAdd() {
+        try {
+            Student saved = studentService.create(readForm());
+            showInfo("Added: " + saved.getName());
             handleClear();
+            loadData();
+        } catch (ValidationException | StudentNotFoundException e) {
+            showError(e.getMessage());
+        } catch (Exception e) {
+            showError("System error: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleUpdate() {
+        Student selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Please select a student");
             return;
         }
-        idField.setText(s.getId() == null ? "" : s.getId().toString());
-        nameField.setText(s.getName());
-        emailField.setText(s.getEmail());
-        ageField.setText(s.getAge() == null ? "" : s.getAge().toString());
-        messageLabel.setText("");
+        try {
+            Student edit = readForm();
+            edit.setId(selected.getId());
+            Student updated = studentService.update(edit);
+            showInfo("Updated: " + updated.getName());
+            handleClear();
+            loadData();
+        } catch (ValidationException | StudentNotFoundException e) {
+            showError(e.getMessage());
+        } catch (Exception e) {
+            showError("System error: " + e.getMessage());
+        }
     }
 
-    private void showInfo(String msg) {
-        messageLabel.setStyle("-fx-text-fill: #27ae60;");
-        messageLabel.setText(msg);
+    @FXML
+    private void handleDelete() {
+        Student selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Please select a student");
+            return;
+        }
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Delete student \"" + selected.getName() + "\"?",
+                ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText("Confirm delete");
+        if (tableView.getScene() != null && tableView.getScene().getWindow() != null) {
+            confirm.initOwner(tableView.getScene().getWindow());
+        }
+        confirm.showAndWait()
+               .filter(rs -> rs == ButtonType.OK)
+               .ifPresent(rs -> {
+                   try {
+                       studentService.delete(selected.getId());
+                       showInfo("Deleted: " + selected.getName());
+                       handleClear();
+                       loadData();
+                   } catch (StudentNotFoundException e) {
+                       showError(e.getMessage());
+                       loadData();
+                   } catch (Exception e) {
+                       showError("System error: " + e.getMessage());
+                   }
+               });
     }
 
-    private void showError(String msg) {
-        messageLabel.setStyle("-fx-text-fill: #e74c3c;");
-        messageLabel.setText(msg);
-    }
-
-    // Các action của TODO 6
-    @FXML private void handleAdd()     { }
-    @FXML private void handleUpdate()  { }
-    @FXML private void handleDelete()  { }
-    @FXML private void handleClear()   {
+    @FXML
+    private void handleClear() {
         idField.clear();
         nameField.clear();
         emailField.clear();
@@ -108,5 +151,23 @@ public class StudentController {
         tableView.getSelectionModel().clearSelection();
         messageLabel.setText("");
         nameField.requestFocus();
+    }
+
+    private void fillForm(Student s) {
+        idField.setText(String.valueOf(s.getId()));
+        nameField.setText(s.getName());
+        emailField.setText(s.getEmail());
+        ageField.setText(String.valueOf(s.getAge()));
+        messageLabel.setText("");
+    }
+
+    private void showInfo(String msg) {
+        messageLabel.setText(msg);
+        messageLabel.setStyle("-fx-text-fill: green;");
+    }
+
+    private void showError(String msg) {
+        messageLabel.setText(msg);
+        messageLabel.setStyle("-fx-text-fill: red;");
     }
 }
