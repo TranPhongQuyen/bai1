@@ -41,6 +41,7 @@ public class DeviceController {
         List<Device> devices = (keyword == null || keyword.isEmpty()) ? deviceService.getAllDevices() : deviceService.searchByName(keyword);
         model.addAttribute("devices", devices);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("deviceName", keyword);
         return "device-list";
     }
 

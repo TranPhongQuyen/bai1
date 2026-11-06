@@ -19,7 +19,9 @@ import java.util.Optional;
 @Service
 public class DeviceServiceImpl implements DeviceService {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static final DateTimeFormatter DATE_FORMATTER = new java.time.format.DateTimeFormatterBuilder()
+            .appendPattern("[dd-MM-yyyy][dd/MM/yyyy]")
+            .toFormatter();
     private final DeviceRepository deviceRepository;
     private final CategoryRepository categoryRepository;
 
